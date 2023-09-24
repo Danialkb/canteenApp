@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "users",
     "food_categories",
     "foods",
+    "orders",
 
     # third party
     "rest_framework",
