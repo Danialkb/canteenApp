@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "users",
+    "food_categories",
+    "foods",
 
     # third party
     "rest_framework",
