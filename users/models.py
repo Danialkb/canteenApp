@@ -14,7 +14,7 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
 
-    def create_user(self, first_name: str, last_name: str, password: str, email: str, user_type: str):
+    def create_user(self, first_name: str, last_name: str, password: str, email: str):
         self._validate_user(email=email)
 
         user = self.model(
@@ -22,7 +22,7 @@ class UserManager(BaseUserManager):
             last_name=last_name,
             email=self.normalize_email(email),
             is_active=True,
-            user_type=user_type
+            user_type=choices.UserTypeChoices.Customer,
         )
         user.set_password(password)
         user.save()

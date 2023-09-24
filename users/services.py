@@ -61,7 +61,7 @@ class UserServicesV1:
     def create_user(self, data: OrderedDict) -> str:
         return self._verify_email(data=data)
 
-    def verify_user(self, data: OrderedDict) -> User:
+    def verify_user(self, data) -> User:
         user_data = cache.get(data['session_id'])
         if user_data['code'] == data['code']:
             user = self.user_repos.create_user(data={
@@ -69,7 +69,6 @@ class UserServicesV1:
                 'last_name': user_data['last_name'],
                 'email': user_data['email'],
                 'password': user_data['password'],
-                'user_type': user_data['user_type']
             })
 
             self.email_sender.send_confirmation_letter(user=user)
