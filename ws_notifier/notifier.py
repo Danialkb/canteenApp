@@ -7,7 +7,7 @@ class WebsocketNotifier:
     def __init__(self):
         self._channel = get_channel_layer()
 
-    def notify(self, payload: dict, group: str = None):
+    def notify(self, payload: dict, group: str = "recipients"):
         async_to_sync(self._channel.group_send)(
             group, payload
         )
