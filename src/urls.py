@@ -23,7 +23,7 @@ from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='HireHive',
+        title='Canteen',
         default_version='V1',
         contact=openapi.Contact(email='hirehive2@gmail.com'),
     ),
