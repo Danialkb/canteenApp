@@ -53,6 +53,8 @@ class UserServicesInterface(Protocol):
 
     def get_user(self, data: OrderedDict) -> User: ...
 
+    def update_user(self, data: OrderedDict, user_id: str) -> User: ...
+
 
 class UserServicesV1:
     user_repos: repos.UserReposInterface = repos.UserReposV1()
@@ -60,6 +62,20 @@ class UserServicesV1:
 
     def create_user(self, data: OrderedDict) -> str:
         return self._verify_email(data=data)
+
+    def get_user(self, data: OrderedDict) -> User:
+        payload = tokens.AccessToken(data['access_token']).payload
+        user_id = payload.get('user_id')
+
+        return self.user_repos.get_user(data={'id': user_id})
+
+    def update_user(self, data: OrderedDict, user_id: str):
+        user = self.user_repos.get_user(data={'id': user_id})
+        user.first_name = data["first_name"]
+        user.last_name = data["last_name"]
+        user.save()
+
+        return user
 
     def verify_user(self, data) -> User:
         user_data = cache.get(data['session_id'])

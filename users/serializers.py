@@ -18,3 +18,21 @@ class VerifyUserSerializer(serializers.Serializer):
 class CreateTokenSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(max_length=128)
+
+
+class GetUserSerializer(serializers.Serializer):
+    access_token = serializers.CharField(max_length=255)
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.User
+        fields = ('first_name', 'last_name')
+
+
+class GetUserInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.User
+        fields = ('id', 'first_name', 'last_name', 'email')

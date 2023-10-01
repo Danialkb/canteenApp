@@ -50,3 +50,25 @@ class UserViewSet(ViewSet):
             return Response({"detail": 'Invalid username or password'}, status=status.HTTP_403_FORBIDDEN)
 
         return Response(tokens)
+
+    @swagger_auto_schema(request_body=serializers.GetUserSerializer)
+    def get_user(self, request, *args, **kwargs):
+        serializer = serializers.GetUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        u = self.user_services.get_user(data=serializer.data)
+
+        user = serializers.GetUserInfoSerializer(u)
+
+        return Response(user.data)
+
+    @swagger_auto_schema(request_body=serializers.UpdateUserSerializer)
+    def update_user(self, request, *args, **kwargs):
+        serializer = serializers.UpdateUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = self.user_services.update_user(data=serializer.data, user_id=request.user.id)
+
+        user = serializers.GetUserInfoSerializer(user)
+
+        return Response(user.data)
