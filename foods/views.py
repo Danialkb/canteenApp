@@ -13,3 +13,9 @@ class FoodViewSet(ModelViewSet):
 
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["^name"]
+
+    def get_queryset(self):
+        category = self.request.query_params.get("category")
+        if category:
+            return self.queryset.filter(category=category)
+        return self.queryset
