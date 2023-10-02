@@ -17,5 +17,5 @@ class FoodViewSet(ModelViewSet):
     def get_queryset(self):
         category = self.request.query_params.get("category")
         if category:
-            return self.queryset.filter(category=category)
-        return self.queryset
+            return Food.objects.filter(category=category)
+        return super().get_queryset()
