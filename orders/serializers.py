@@ -13,6 +13,12 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("status", )
 
+    def to_representation(self, instance):
+        representation = super(OrderSerializer, self).to_representation(instance)
+        representation["customer"] = instance.customer.id
+
+        return representation
+
 
 class OrderGetSerializer(serializers.ModelSerializer):
     food = FoodSerializer()
@@ -29,4 +35,11 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("amount", "special_wishes")
+
+
+class OrderStatusUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = ("customer", )
 

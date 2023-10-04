@@ -5,3 +5,4 @@ class StatusChoices(TextChoices):
     Waiting = "Waiting"
     Completed = "Completed"
     Processing = "Processing"
+    Given = "Given"
