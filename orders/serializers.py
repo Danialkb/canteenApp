@@ -22,3 +22,11 @@ class OrderGetSerializer(serializers.ModelSerializer):
         model = Order
         fields = "__all__"
         read_only_fields = ("status",)
+
+
+class OrderUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = ("amount", "special_wishes")
+

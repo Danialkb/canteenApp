@@ -13,3 +13,6 @@ class Food(models.Model):
     price = models.IntegerField(default=0)
     amount = models.IntegerField(default=0)
     category = models.ForeignKey(to=FoodCategory, on_delete=models.CASCADE, related_name="foods")
+
+    def __str__(self):
+        return f"{self.name}"
