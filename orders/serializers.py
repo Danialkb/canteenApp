@@ -11,11 +11,11 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ("status", )
+        read_only_fields = ("status", "order_identifier")
 
     def to_representation(self, instance):
         representation = super(OrderSerializer, self).to_representation(instance)
-        representation["customer"] = instance.customer.id
+        # representation["customer"] = instance.customer.id
 
         return representation
 
@@ -27,7 +27,7 @@ class OrderGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ("status",)
+        read_only_fields = ("status", "order_identifier")
 
 
 class OrderUpdateSerializer(serializers.ModelSerializer):
@@ -41,5 +41,5 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ("customer", )
+        fields = ("order_identifier", )
 

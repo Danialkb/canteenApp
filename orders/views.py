@@ -1,3 +1,5 @@
+import random
+
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -60,11 +62,13 @@ class OrderViewSet(ModelViewSet):
     @action(detail=False, methods=["GET"])
     def send_user_orders(self, request, *args, **kwargs):
         orders = Order.objects.filter(status="Waiting", customer_id=request.user.id)
+        identifier = random.randint(100000, 999999)
 
         for order in orders:
             order.status = "Processing"
+            order.order_identifier = identifier
 
-        Order.objects.bulk_update(orders,  fields=["status"])
+        Order.objects.bulk_update(orders,  fields=["status", "order_identifier"])
 
         return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 
@@ -83,7 +87,7 @@ class OrderViewSet(ModelViewSet):
     def mark_ready(self, request, *args, **kwargs):
         serializer = OrderStatusUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self._mark_orders(serializer.data["customer"], "Completed", filter_status="Processing")
+        self._mark_orders("Completed", serializer.data["order_identifier"])
 
         return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 
@@ -91,12 +95,12 @@ class OrderViewSet(ModelViewSet):
     def mark_given(self, request, *args, **kwargs):
         serializer = OrderStatusUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self._mark_orders(serializer.data["customer"], "Given", filter_status="Completed")
+        self._mark_orders("Given", serializer.data["order_identifier"])
 
         return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 
-    def _mark_orders(self, customer_id, status, filter_status):
-        orders = self.queryset.filter(status=filter_status, customer_id=customer_id)
+    def _mark_orders(self, status, identifier):
+        orders = self.queryset.filter(order_identifier=identifier)
 
         for order in orders:
             order.status = status

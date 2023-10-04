@@ -11,3 +11,4 @@ class Order(models.Model):
     special_wishes = models.TextField(blank=True, default="")
     amount = models.FloatField(default=1)
     status = models.CharField(choices=StatusChoices.choices, default=StatusChoices.Waiting)
+    order_identifier = models.IntegerField(default=0)
