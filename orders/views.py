@@ -15,7 +15,7 @@ from orders.serializers import OrderSerializer, OrderGetSerializer, OrderUpdateS
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'my_orders':
@@ -59,6 +59,19 @@ class OrderViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def destroy(self, request, *args, **kwargs):
+
+        instance = self.get_object()
+
+        food = Food.objects.get(id=instance.food.id)
+
+        food.amount += instance.amount
+
+        food.save()
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["GET"])
     def send_user_orders(self, request, *args, **kwargs):
         orders = Order.objects.filter(status="Waiting", customer_id=request.user.id)
@@ -68,7 +81,7 @@ class OrderViewSet(ModelViewSet):
             order.status = "Processing"
             order.order_identifier = identifier
 
-        Order.objects.bulk_update(orders,  fields=["status", "order_identifier"])
+        Order.objects.bulk_update(orders, fields=["status", "order_identifier"])
 
         return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 
