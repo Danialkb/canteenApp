@@ -24,15 +24,14 @@ class GetUserSerializer(serializers.Serializer):
     access_token = serializers.CharField(max_length=255)
 
 
-class UpdateUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.User
-        fields = ('first_name', 'last_name')
+class UpdateUserSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
 
 
 class GetUserInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ('id', 'first_name', 'last_name', 'email')
+        fields = ('id', 'first_name', 'last_name', 'email', "user_type")

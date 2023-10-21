@@ -71,8 +71,10 @@ class UserServicesV1:
 
     def update_user(self, data: OrderedDict, user_id: str):
         user = self.user_repos.get_user(data={'id': user_id})
+        print(user)
         user.first_name = data["first_name"]
         user.last_name = data["last_name"]
+        user.email = data["email"]
         user.save()
 
         return user

@@ -9,13 +9,15 @@ from rest_framework.viewsets import ModelViewSet
 from foods.models import Food
 from orders.choices import StatusChoices
 from orders.models import Order
+from orders.notifiers import OrderStatusChangeNotifier
 from orders.serializers import OrderSerializer, OrderGetSerializer, OrderUpdateSerializer, OrderStatusUpdateSerializer
 
 
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
+    notifier = OrderStatusChangeNotifier()
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'my_orders':
@@ -88,9 +90,18 @@ class OrderViewSet(ModelViewSet):
     @action(detail=False, methods=["GET"])
     def get_active_orders(self, request, *args, **kwargs):
         if request.user.user_type == "Manager":
-            orders = self.queryset.filter(status="Processing")
+            order_status = request.query_params["order_status"]
+            orders = self.queryset.filter(status=order_status)
         else:
-            orders = self.queryset.filter(status__in="Processing Completed", customer_id=request.user.id)
+            orders = Order.objects.filter(status__in=("Processing", "Completed"), customer_id=request.user.id)
+            print(orders)
+        serializer = OrderGetSerializer(orders, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"])
+    def order_history(self, request, *args, **kwargs):
+        orders = self.queryset.filter(status="Given", customer_id=request.user.id)
 
         serializer = OrderSerializer(orders, many=True)
 
@@ -102,6 +113,13 @@ class OrderViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self._mark_orders("Completed", serializer.data["order_identifier"])
 
+        user_id = Order.objects.filter(order_identifier=serializer.data["order_identifier"]).first().customer_id
+
+        self.notifier.notify(
+            user_id,
+            {"order_identifier": serializer.data["order_identifier"], "order_status": "Completed"}
+        )
+
         return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["POST"])
@@ -109,6 +127,13 @@ class OrderViewSet(ModelViewSet):
         serializer = OrderStatusUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self._mark_orders("Given", serializer.data["order_identifier"])
+
+        user_id = Order.objects.get(order_identifier=serializer.data["order_identifier"]).customer_id
+
+        self.notifier.notify(
+            user_id,
+            {"order_identifier": serializer.data["order_identifier"], "order_status": "Given"}
+        )
 
         return Response({"detail": "ok"}, status=status.HTTP_200_OK)
 

@@ -1,18 +1,18 @@
 from ws_notifier.notifier import WebsocketNotifier
 
 
-class OrderCreatedNotifier:
+class OrderStatusChangeNotifier:
 
     def __init__(self):
         self.ws = WebsocketNotifier()
 
-    def notify(self, user_id, order):
+    def notify(self, user_id, order_data):
         self.ws.notify(
             {
                 "type": "send_notification_to_user",
-                "event": "order_created",
+                "event": "order_status_change",
                 "user_id": str(user_id),
-                "order": order,
+                "data": order_data,
             },
             group=str(user_id),
         )
