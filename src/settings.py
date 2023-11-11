@@ -30,7 +30,7 @@ SECRET_KEY = "django-insecure-8a#7)et+@k@*d^s=5&g*y(fw__h#jb1#4^9sj_z%j26c!gz&mc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     "channels",
     "rest_framework_simplejwt",
     "drf_yasg",
+    "django_extensions",
+    "sslserver",
 ]
 
 MIDDLEWARE = [
@@ -72,6 +74,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'src.urls'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 TEMPLATES = [
     {
@@ -178,7 +183,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20
 }
 
