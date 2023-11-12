@@ -54,7 +54,7 @@ class OrderViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        food.amount -= instance.amount
+        food.amount -= 1
         food.save()
         instance.save()
 
