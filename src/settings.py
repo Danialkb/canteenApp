@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "food_categories",
     "foods",
     "orders",
+    "chat",
 
     # third party
     "rest_framework",
@@ -57,7 +58,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "drf_yasg",
     "django_extensions",
-    "sslserver",
 ]
 
 MIDDLEWARE = [

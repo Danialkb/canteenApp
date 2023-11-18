@@ -5,6 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from users import services, serializers
+from users.models import User
 
 
 class UserViewSet(ViewSet):
@@ -53,12 +54,12 @@ class UserViewSet(ViewSet):
 
     @swagger_auto_schema(request_body=serializers.GetUserSerializer)
     def get_user(self, request, *args, **kwargs):
-        serializer = serializers.GetUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        # serializer = serializers.GetUserSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
 
-        u = self.user_services.get_user(data=serializer.data)
-
-        user = serializers.GetUserInfoSerializer(u)
+        # u = self.user_services.get_user(data=serializer.data)
+        user_from_db = User.objects.get(id=request.user.id)
+        user = serializers.GetUserInfoSerializer(user_from_db)
 
         return Response(user.data)
 
