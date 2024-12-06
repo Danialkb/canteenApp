@@ -9,3 +9,4 @@ class FoodCategoryViewSet(ModelViewSet):
     queryset = FoodCategory.objects.all()
     serializer_class = FoodCategorySerializer
     permission_classes = (IsManager, )
+

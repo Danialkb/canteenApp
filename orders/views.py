@@ -1,5 +1,6 @@
 import random
 
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -103,7 +104,7 @@ class OrderViewSet(ModelViewSet):
     def order_history(self, request, *args, **kwargs):
         orders = self.queryset.filter(status="Given", customer_id=request.user.id)
 
-        serializer = OrderSerializer(orders, many=True)
+        serializer = OrderGetSerializer(orders, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

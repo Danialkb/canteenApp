@@ -52,14 +52,16 @@ class UserViewSet(ViewSet):
 
         return Response(tokens)
 
-    @swagger_auto_schema(request_body=serializers.GetUserSerializer)
     def get_user(self, request, *args, **kwargs):
         # serializer = serializers.GetUserSerializer(data=request.data)
         # serializer.is_valid(raise_exception=True)
 
         # u = self.user_services.get_user(data=serializer.data)
-        user_from_db = User.objects.get(id=request.user.id)
-        user = serializers.GetUserInfoSerializer(user_from_db)
+        try:
+            user_from_db = User.objects.get(id=request.user.id)
+            user = serializers.GetUserInfoSerializer(user_from_db)
+        except Exception as e:
+            return Response({'detail': "unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(user.data)
 
